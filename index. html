@@ -1,0 +1,346 @@
+Página completa 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbería El Estilo</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .tarjeta {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .portada {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .portada h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .portada p {
+            color: #666;
+        }
+
+        .servicio {
+            background: #eeeeee;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 12px;
+        }
+
+        .servicio strong {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            margin-top: 30px;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-top: 15px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .boton-reservar {
+            background: #222;
+            color: white;
+        }
+
+        .boton-otra {
+            background: #eeeeee;
+            color: #222;
+        }
+
+        .confirmacion {
+            display: none;
+            text-align: left;
+        }
+
+        .confirmacion h2 {
+            text-align: center;
+        }
+
+        .dato {
+            background: #f2f2f2;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+        }
+
+        .mensaje {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="tarjeta">
+
+        <div class="portada">
+            <h1>💈 Barbería El Estilo</h1>
+            <p>Cortes y estilos para todos</p>
+        </div>
+
+        <h2>Servicios</h2>
+
+        <div class="servicio">
+            <strong>✂️ Corte</strong>
+            $25.000
+        </div>
+
+        <div class="servicio">
+            <strong>🧔 Corte + barba</strong>
+            $35.000
+        </div>
+
+        <div class="servicio">
+            <strong>💈 Diseño completo</strong>
+            $45.000
+        </div>
+
+        <h2>Reserva tu cita</h2>
+
+        <form id="formulario">
+
+            <label for="nombre">Nombre</label>
+            <input
+                type="text"
+                id="nombre"
+                placeholder="Escribe tu nombre"
+                required
+            >
+
+            <label for="telefono">Teléfono</label>
+            <input
+                type="tel"
+                id="telefono"
+                placeholder="Tu número"
+                required
+            >
+
+            <label for="servicio">Servicio</label>
+            <select id="servicio" required>
+                <option value="">Elige un servicio</option>
+                <option value="Corte - $25.000">
+                    Corte - $25.000
+                </option>
+                <option value="Corte + barba - $35.000">
+                    Corte + barba - $35.000
+                </option>
+                <option value="Diseño completo - $45.000">
+                    Diseño completo - $45.000
+                </option>
+            </select>
+
+            <label for="fecha">Fecha</label>
+            <input
+                type="date"
+                id="fecha"
+                required
+            >
+
+            <label for="hora">Hora</label>
+            <select id="hora" required>
+                <option value="">Elige una hora</option>
+                <option>9:00 AM</option>
+                <option>10:00 AM</option>
+                <option>11:00 AM</option>
+                <option>12:00 PM</option>
+                <option>1:00 PM</option>
+                <option>2:00 PM</option>
+                <option>3:00 PM</option>
+                <option>4:00 PM</option>
+                <option>5:00 PM</option>
+                <option>6:00 PM</option>
+            </select>
+
+            <label for="comentario">Comentario (opcional)</label>
+            <textarea
+                id="comentario"
+                placeholder="¿Quieres decirnos algo?"
+            ></textarea>
+
+            <button
+                type="submit"
+                class="boton-reservar"
+            >
+                Reservar cita
+            </button>
+
+            <div id="mensaje" class="mensaje"></div>
+
+        </form>
+
+        <div id="confirmacion" class="confirmacion">
+
+            <h2>✅ ¡Cita solicitada!</h2>
+
+            <p>Estos son los datos de tu reserva:</p>
+
+            <div class="dato">
+                <strong>Nombre:</strong>
+                <span id="resultadoNombre"></span>
+            </div>
+
+            <div class="dato">
+                <strong>Teléfono:</strong>
+                <span id="resultadoTelefono"></span>
+            </div>
+
+            <div class="dato">
+                <strong>Servicio:</strong>
+                <span id="resultadoServicio"></span>
+            </div>
+
+            <div class="dato">
+                <strong>Fecha:</strong>
+                <span id="resultadoFecha"></span>
+            </div>
+
+            <div class="dato">
+                <strong>Hora:</strong>
+                <span id="resultadoHora"></span>
+            </div>
+
+            <div class="dato">
+                <strong>Comentario:</strong>
+                <span id="resultadoComentario"></span>
+            </div>
+
+            <button
+                class="boton-otra"
+                onclick="otraReserva()"
+            >
+                Hacer otra reserva
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    const formulario = document.getElementById("formulario");
+
+    formulario.addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const nombre =
+            document.getElementById("nombre").value;
+
+        const telefono =
+            document.getElementById("telefono").value;
+
+        const servicio =
+            document.getElementById("servicio").value;
+
+        const fecha =
+            document.getElementById("fecha").value;
+
+        const hora =
+            document.getElementById("hora").value;
+
+        const comentario =
+            document.getElementById("comentario").value;
+
+        document.getElementById("resultadoNombre")
+            .textContent = nombre;
+
+        document.getElementById("resultadoTelefono")
+            .textContent = telefono;
+
+        document.getElementById("resultadoServicio")
+            .textContent = servicio;
+
+        document.getElementById("resultadoFecha")
+            .textContent = fecha;
+
+        document.getElementById("resultadoHora")
+            .textContent = hora;
+
+        document.getElementById("resultadoComentario")
+            .textContent =
+            comentario || "Sin comentario";
+
+        formulario.style.display = "none";
+
+        document.getElementById("confirmacion")
+            .style.display = "block";
+    });
+
+    function otraReserva() {
+
+        formulario.reset();
+
+        formulario.style.display = "block";
+
+        document.getElementById("confirmacion")
+            .style.display = "none";
+    }
+
+</script>
+
+</body>
+</html>
