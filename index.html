@@ -1,8 +1,3 @@
-
-            padding: 15px;
-            margin-top: 20px;
-            
-            
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbería El Estilo</title>
 
-    <!-- Conexión con Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -94,22 +88,52 @@
 
         button {
             width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
             cursor: pointer;
         }
 
-        .boton-reservar {
+        .boton-principal {
             background: #222;
             color: white;
         }
 
-        .boton-otra {
+        .boton-secundario {
             background: #eeeeee;
             color: #222;
         }
 
+        .mensaje {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #b00020;
+        }
+
+        .exito {
+            color: #087f23;
+        }
+
+        .oculto {
+            display: none;
+        }
+
+        .usuario-barra {
+            background: #f2f2f2;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
         .confirmacion {
             display: none;
-            text-align: left;
         }
 
         .confirmacion h2 {
@@ -121,12 +145,6 @@
             padding: 12px;
             border-radius: 8px;
             margin: 8px 0;
-        }
-
-        .mensaje {
-            text-align: center;
-            margin-top: 15px;
-            font-weight: bold;
         }
     </style>
 </head>
@@ -142,138 +160,342 @@
             <p>Cortes y estilos para todos</p>
         </div>
 
-        <h2>Servicios</h2>
 
-        <div class="servicio">
-            <strong>✂️ Corte</strong>
-            $25.000
-        </div>
+        <!-- ==========================
+             INICIO / REGISTRO
+             ========================== -->
 
-        <div class="servicio">
-            <strong>🧔 Corte + barba</strong>
-            $35.000
-        </div>
+        <div id="zonaAuth">
 
-        <div class="servicio">
-            <strong>💈 Diseño completo</strong>
-            $45.000
-        </div>
+            <h2>Iniciar sesión</h2>
 
-        <h2>Reserva tu cita</h2>
+            <form id="formLogin">
 
-        <form id="formulario">
+                <label for="loginEmail">
+                    Correo electrónico
+                </label>
 
-            <label for="nombre">Nombre</label>
-            <input
-                type="text"
-                id="nombre"
-                placeholder="Escribe tu nombre"
-                required
-            >
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="tu@email.com"
+                    required
+                >
 
-            <label for="telefono">Teléfono</label>
-            <input
-                type="tel"
-                id="telefono"
-                placeholder="Tu número"
-                required
-            >
+                <label for="loginPassword">
+                    Contraseña
+                </label>
 
-            <label for="servicio">Servicio</label>
-            <select id="servicio" required>
-                <option value="">Elige un servicio</option>
-                <option value="Corte - $25.000">
-                    Corte - $25.000
-                </option>
-                <option value="Corte + barba - $35.000">
-                    Corte + barba - $35.000
-                </option>
-                <option value="Diseño completo - $45.000">
-                    Diseño completo - $45.000
-                </option>
-            </select>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Tu contraseña"
+                    required
+                >
 
-            <label for="fecha">Fecha</label>
-            <input
-                type="date"
-                id="fecha"
-                required
-            >
+                <button
+                    type="submit"
+                    class="boton-principal"
+                >
+                    Iniciar sesión
+                </button>
 
-            <label for="hora">Hora</label>
-            <select id="hora" required>
-                <option value="">Elige una hora</option>
-                <option>9:00 AM</option>
-                <option>10:00 AM</option>
-                <option>11:00 AM</option>
-                <option>12:00 PM</option>
-                <option>1:00 PM</option>
-                <option>2:00 PM</option>
-                <option>3:00 PM</option>
-                <option>4:00 PM</option>
-                <option>5:00 PM</option>
-                <option>6:00 PM</option>
-            </select>
-
-            <label for="comentario">Comentario (opcional)</label>
-            <textarea
-                id="comentario"
-                placeholder="¿Quieres decirnos algo?"
-            ></textarea>
+            </form>
 
             <button
-                type="submit"
-                class="boton-reservar"
+                type="button"
+                id="botonMostrarRegistro"
+                class="boton-secundario"
             >
-                Reservar cita
+                Crear una cuenta
             </button>
 
-            <div id="mensaje" class="mensaje"></div>
+            <div
+                id="mensajeLogin"
+                class="mensaje"
+            ></div>
 
-        </form>
 
-        <div id="confirmacion" class="confirmacion">
+            <!-- REGISTRO -->
 
-            <h2>✅ ¡Cita solicitada!</h2>
-
-            <p>Estos son los datos de tu reserva:</p>
-
-            <div class="dato">
-                <strong>Nombre:</strong>
-                <span id="resultadoNombre"></span>
-            </div>
-
-            <div class="dato">
-                <strong>Teléfono:</strong>
-                <span id="resultadoTelefono"></span>
-            </div>
-
-            <div class="dato">
-                <strong>Servicio:</strong>
-                <span id="resultadoServicio"></span>
-            </div>
-
-            <div class="dato">
-                <strong>Fecha:</strong>
-                <span id="resultadoFecha"></span>
-            </div>
-
-            <div class="dato">
-                <strong>Hora:</strong>
-                <span id="resultadoHora"></span>
-            </div>
-
-            <div class="dato">
-                <strong>Comentario:</strong>
-                <span id="resultadoComentario"></span>
-            </div>
-
-            <button
-                class="boton-otra"
-                onclick="otraReserva()"
+            <div
+                id="zonaRegistro"
+                class="oculto"
             >
-                Hacer otra reserva
-            </button>
+
+                <h2>Crear cuenta</h2>
+
+                <form id="formRegistro">
+
+                    <label for="registroEmail">
+                        Correo electrónico
+                    </label>
+
+                    <input
+                        type="email"
+                        id="registroEmail"
+                        placeholder="tu@email.com"
+                        required
+                    >
+
+                    <label for="registroPassword">
+                        Contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        id="registroPassword"
+                        placeholder="Mínimo 6 caracteres"
+                        minlength="6"
+                        required
+                    >
+
+                    <button
+                        type="submit"
+                        class="boton-principal"
+                    >
+                        Registrarme
+                    </button>
+
+                </form>
+
+                <button
+                    type="button"
+                    id="botonVolverLogin"
+                    class="boton-secundario"
+                >
+                    Volver a iniciar sesión
+                </button>
+
+                <div
+                    id="mensajeRegistro"
+                    class="mensaje"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================
+             ZONA DEL USUARIO
+             ========================== -->
+
+        <div
+            id="zonaUsuario"
+            class="oculto"
+        >
+
+            <div class="usuario-barra">
+
+                <div>
+                    Sesión iniciada como:
+                </div>
+
+                <strong id="correoUsuario"></strong>
+
+                <button
+                    type="button"
+                    id="botonCerrarSesion"
+                    class="boton-secundario"
+                >
+                    Cerrar sesión
+                </button>
+
+            </div>
+
+
+            <h2>Servicios</h2>
+
+            <div class="servicio">
+                <strong>✂️ Corte</strong>
+                $25.000
+            </div>
+
+            <div class="servicio">
+                <strong>🧔 Corte + barba</strong>
+                $35.000
+            </div>
+
+            <div class="servicio">
+                <strong>💈 Diseño completo</strong>
+                $45.000
+            </div>
+
+
+            <h2>Reserva tu cita</h2>
+
+            <form id="formulario">
+
+                <label for="nombre">
+                    Nombre
+                </label>
+
+                <input
+                    type="text"
+                    id="nombre"
+                    placeholder="Escribe tu nombre"
+                    required
+                >
+
+
+                <label for="telefono">
+                    Teléfono
+                </label>
+
+                <input
+                    type="tel"
+                    id="telefono"
+                    placeholder="Tu número"
+                    required
+                >
+
+
+                <label for="servicio">
+                    Servicio
+                </label>
+
+                <select
+                    id="servicio"
+                    required
+                >
+
+                    <option value="">
+                        Elige un servicio
+                    </option>
+
+                    <option value="99eacd71-c106-4a4e-8ce2-6a9e1bee5754">
+                        Corte - $25.000
+                    </option>
+
+                </select>
+
+
+                <p>
+                    Por ahora solo está conectado el servicio
+                    <strong>Corte</strong>.
+                    Los otros dos los conectaremos cuando
+                    tengamos sus respectivos IDs.
+                </p>
+
+
+                <label for="fecha">
+                    Fecha
+                </label>
+
+                <input
+                    type="date"
+                    id="fecha"
+                    required
+                >
+
+
+                <label for="hora">
+                    Hora
+                </label>
+
+                <select
+                    id="hora"
+                    required
+                >
+
+                    <option value="">
+                        Elige una hora
+                    </option>
+
+                    <option value="09:00">9:00 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="13:00">1:00 PM</option>
+                    <option value="14:00">2:00 PM</option>
+                    <option value="15:00">3:00 PM</option>
+                    <option value="16:00">4:00 PM</option>
+                    <option value="17:00">5:00 PM</option>
+                    <option value="18:00">6:00 PM</option>
+
+                </select>
+
+
+                <label for="comentario">
+                    Comentario (opcional)
+                </label>
+
+                <textarea
+                    id="comentario"
+                    placeholder="¿Quieres decirnos algo?"
+                ></textarea>
+
+
+                <button
+                    type="submit"
+                    class="boton-principal"
+                >
+                    Reservar cita
+                </button>
+
+                <div
+                    id="mensajeCita"
+                    class="mensaje"
+                ></div>
+
+            </form>
+
+
+            <!-- ==========================
+                 CONFIRMACIÓN
+                 ========================== -->
+
+            <div
+                id="confirmacion"
+                class="confirmacion"
+            >
+
+                <h2>✅ ¡Cita solicitada!</h2>
+
+                <p>
+                    Estos son los datos de tu reserva:
+                </p>
+
+                <div class="dato">
+                    <strong>Nombre:</strong>
+                    <span id="resultadoNombre"></span>
+                </div>
+
+                <div class="dato">
+                    <strong>Teléfono:</strong>
+                    <span id="resultadoTelefono"></span>
+                </div>
+
+                <div class="dato">
+                    <strong>Servicio:</strong>
+                    <span id="resultadoServicio"></span>
+                </div>
+
+                <div class="dato">
+                    <strong>Fecha:</strong>
+                    <span id="resultadoFecha"></span>
+                </div>
+
+                <div class="dato">
+                    <strong>Hora:</strong>
+                    <span id="resultadoHora"></span>
+                </div>
+
+                <div class="dato">
+                    <strong>Comentario:</strong>
+                    <span id="resultadoComentario"></span>
+                </div>
+
+                <button
+                    type="button"
+                    id="botonOtraReserva"
+                    class="boton-secundario"
+                >
+                    Hacer otra reserva
+                </button>
+
+            </div>
 
         </div>
 
@@ -281,17 +503,24 @@
 
 </div>
 
+
 <script>
 
     /* ==========================================
-       CONFIGURACIÓN DE SUPABASE
+       SUPABASE
        ========================================== */
 
-    const SUPABASE_URL ="https://mjxiyzapdybzckurootw.supabase.co";
-        
+    const SUPABASE_URL =
+        "https://mjxiyzapdybzckurootw.supabase.co";
 
-    const SUPABASE_KEY ="sb_publishable_Ox1Wz7UT2Gw6uHOP6SncjQ_sGapEEB-";
-        
+    /*
+     * IMPORTANTE:
+     * Pon aquí tu misma publishable key que ya tenías.
+     */
+
+    const SUPABASE_KEY =
+        "PEGA_AQUI_TU_PUBLISHABLE_KEY";
+
 
     const supabaseClient =
         window.supabase.createClient(
@@ -301,7 +530,7 @@
 
 
     /* ==========================================
-       ID DEL NEGOCIO
+       NEGOCIO
        ========================================== */
 
     const NEGOCIO_ID =
@@ -309,170 +538,332 @@
 
 
     /* ==========================================
-       ID DEL SERVICIO
+       ELEMENTOS
        ========================================== */
 
-    const SERVICIO_ID ="99eacd71-c106-4a4e-8ce2-6a9e1bee5754";
-        
+    const zonaAuth =
+        document.getElementById("zonaAuth");
+
+    const zonaUsuario =
+        document.getElementById("zonaUsuario");
+
+    const zonaRegistro =
+        document.getElementById("zonaRegistro");
+
+    const mensajeLogin =
+        document.getElementById("mensajeLogin");
+
+    const mensajeRegistro =
+        document.getElementById("mensajeRegistro");
+
+    const mensajeCita =
+        document.getElementById("mensajeCita");
 
 
     /* ==========================================
-       FORMULARIO
+       MOSTRAR REGISTRO
        ========================================== */
 
-    const formulario =
-        document.getElementById("formulario");
+    document
+        .getElementById("botonMostrarRegistro")
+        .addEventListener(
+            "click",
+            function () {
 
+                zonaRegistro.classList.remove("oculto");
 
-    formulario.addEventListener(
-        "submit",
-        async function(event) {
+                mensajeLogin.textContent = "";
 
-            event.preventDefault();
-
-
-            const nombre =
-                document.getElementById("nombre").value;
-
-            const telefono =
-                document.getElementById("telefono").value;
-
-            const servicio =
-                document.getElementById("servicio").value;
-
-            const fecha =
-                document.getElementById("fecha").value;
-
-            const hora =
-                document.getElementById("hora").value;
-
-            const comentario =
-                document.getElementById("comentario").value;
-
-
-            const mensaje =
-                document.getElementById("mensaje");
-
-
-            mensaje.textContent =
-                "Guardando la cita...";
-
-
-            /*
-             * Guardar la cita en Supabase
-             */
-
-            const { data, error } =
-                await supabaseClient
-                    .from("citas")
-                    .insert([
-                        {
-                            negocio_id: NEGOCIO_ID,
-                            servicio_id: SERVICIO_ID,
-                            nombre_cliente: nombre,
-                            telefono_cliente: telefono,
-                            fecha: fecha,
-                            hora: hora,
-                            comentario:
-                                comentario || null,
-                            estado: "pendiente"
-                        }
-                    ])
-                    .select();
-
-
-            /*
-             * Si Supabase devuelve un error
-             */
-
-            if (error) {
-
-                console.error(
-                    "Error al guardar la cita:",
-                    error
-                );
-
-    
-                mensaje.textContent="Error: " + error .message;
- 
-                    
-
-                return;
             }
+        );
 
 
-            /*
-             * Mostrar confirmación
-             */
+    /* ==========================================
+       VOLVER AL LOGIN
+       ========================================== */
 
-            document.getElementById(
-                "resultadoNombre"
-            ).textContent = nombre;
+    document
+        .getElementById("botonVolverLogin")
+        .addEventListener(
+            "click",
+            function () {
 
+                zonaRegistro.classList.add("oculto");
 
-            document.getElementById(
-                "resultadoTelefono"
-            ).textContent = telefono;
+                mensajeRegistro.textContent = "";
 
-
-            document.getElementById(
-                "resultadoServicio"
-            ).textContent = servicio;
-
-
-            document.getElementById(
-                "resultadoFecha"
-            ).textContent = fecha;
+            }
+        );
 
 
-            document.getElementById(
-                "resultadoHora"
-            ).textContent = hora;
+    /* ==========================================
+       REGISTRO
+       ========================================== */
+
+    document
+        .getElementById("formRegistro")
+        .addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+                mensajeRegistro.textContent =
+                    "Creando cuenta...";
+
+                const email =
+                    document
+                        .getElementById("registroEmail")
+                        .value
+                        .trim();
+
+                const password =
+                    document
+                        .getElementById("registroPassword")
+                        .value;
 
 
-            document.getElementById(
-                "resultadoComentario"
-            ).textContent =
-                comentario || "Sin comentario";
+                const {
+                    data,
+                    error
+                } =
+                    await supabaseClient.auth.signUp({
+                        email: email,
+                        password: password
+                    });
 
 
-            mensaje.textContent = "";
+                if (error) {
+
+                    console.error(error);
+
+                    mensajeRegistro.textContent =
+                        "Error: " + error.message;
+
+                    mensajeRegistro.className =
+                        "mensaje error";
+
+                    return;
+                }
 
 
-            formulario.style.display =
-                "none";
+                /*
+                 * Si Supabase requiere confirmar
+                 * el correo, mostramos el aviso.
+                 */
+
+                if (
+                    data.user &&
+                    !data.session
+                ) {
+
+                    mensajeRegistro.textContent =
+                        "Cuenta creada. Revisa tu correo para confirmar la cuenta.";
+
+                    mensajeRegistro.className =
+                        "mensaje exito";
+
+                    return;
+                }
 
 
-            document.getElementById(
-                "confirmacion"
-            ).style.display = "block";
+                mensajeRegistro.textContent =
+                    "Cuenta creada correctamente.";
+
+                mensajeRegistro.className =
+                    "mensaje exito";
+
+            }
+        );
+
+
+    /* ==========================================
+       INICIAR SESIÓN
+       ========================================== */
+
+    document
+        .getElementById("formLogin")
+        .addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+                mensajeLogin.textContent =
+                    "Iniciando sesión...";
+
+
+                const email =
+                    document
+                        .getElementById("loginEmail")
+                        .value
+                        .trim();
+
+                const password =
+                    document
+                        .getElementById("loginPassword")
+                        .value;
+
+
+                const {
+                    error
+                } =
+                    await supabaseClient.auth
+                        .signInWithPassword({
+                            email: email,
+                            password: password
+                        });
+
+
+                if (error) {
+
+                    console.error(error);
+
+                    mensajeLogin.textContent =
+                        "Error: " + error.message;
+
+                    mensajeLogin.className =
+                        "mensaje error";
+
+                    return;
+                }
+
+
+                mensajeLogin.textContent = "";
+
+            }
+        );
+
+
+    /* ==========================================
+       CERRAR SESIÓN
+       ========================================== */
+
+    document
+        .getElementById("botonCerrarSesion")
+        .addEventListener(
+            "click",
+            async function () {
+
+                const {
+                    error
+                } =
+                    await supabaseClient.auth.signOut();
+
+
+                if (error) {
+
+                    console.error(error);
+
+                }
+
+            }
+        );
+
+
+    /* ==========================================
+       ACTUALIZAR INTERFAZ
+       ========================================== */
+
+    async function actualizarInterfaz() {
+
+        const {
+            data: {
+                session
+            }
+        } =
+            await supabaseClient.auth.getSession();
+
+
+        if (
+            session &&
+            session.user
+        ) {
+
+            zonaAuth.classList.add("oculto");
+
+            zonaUsuario.classList.remove("oculto");
+
+            document
+                .getElementById("correoUsuario")
+                .textContent =
+                    session.user.email;
+
+        } else {
+
+            zonaAuth.classList.remove("oculto");
+
+            zonaUsuario.classList.add("oculto");
+
+        }
+
+    }
+
+
+    supabaseClient.auth.onAuthStateChange(
+        function () {
+
+            actualizarInterfaz();
 
         }
     );
 
 
+    actualizarInterfaz();
+
+
     /* ==========================================
-       HACER OTRA RESERVA
+       RESERVAR CITA
        ========================================== */
 
-    function otraReserva() {
+    document
+        .getElementById("formulario")
+        .addEventListener(
+            "submit",
+            async function (event) {
 
-        formulario.reset();
+                event.preventDefault();
 
-        formulario.style.display =
-            "block";
+                mensajeCita.textContent =
+                    "Guardando la cita...";
 
-        document.getElementById(
-            "confirmacion"
-        ).style.display = "none";
+                mensajeCita.className =
+                    "mensaje";
 
-        document.getElementById(
-            "mensaje"
-        ).textContent = "";
 
-    }
+                /*
+                 * Obtener usuario autenticado
+                 */
 
-</script>
+                const {
+                    data: {
+                        user
+                    },
+                    error: userError
+                } =
+                    await supabaseClient.auth.getUser();
 
-</body>
-</html>
+
+                if (
+                    userError ||
+                    !user
+                ) {
+
+                    mensajeCita.textContent =
+                        "Debes iniciar sesión para reservar.";
+
+                    mensajeCita.className =
+                        "mensaje error";
+
+                    return;
+                }
+
+
+                const nombre =
+                    document
+                        .getElementById("nombre")
+                        .value
+                        .trim();
+
+
+       
