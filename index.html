@@ -160,9 +160,8 @@
             <p>Cortes y estilos para todos</p>
         </div>
 
-
         <!-- ==========================
-             INICIO / REGISTRO
+             INICIO DE SESIÓN / REGISTRO
              ========================== -->
 
         <div id="zonaAuth">
@@ -338,7 +337,6 @@
                     required
                 >
 
-
                 <label for="telefono">
                     Teléfono
                 </label>
@@ -349,7 +347,6 @@
                     placeholder="Tu número"
                     required
                 >
-
 
                 <label for="servicio">
                     Servicio
@@ -370,14 +367,10 @@
 
                 </select>
 
-
                 <p>
-                    Por ahora solo está conectado el servicio
+                    Por ahora está conectado el servicio
                     <strong>Corte</strong>.
-                    Los otros dos los conectaremos cuando
-                    tengamos sus respectivos IDs.
                 </p>
-
 
                 <label for="fecha">
                     Fecha
@@ -388,7 +381,6 @@
                     id="fecha"
                     required
                 >
-
 
                 <label for="hora">
                     Hora
@@ -416,7 +408,6 @@
 
                 </select>
 
-
                 <label for="comentario">
                     Comentario (opcional)
                 </label>
@@ -425,7 +416,6 @@
                     id="comentario"
                     placeholder="¿Quieres decirnos algo?"
                 ></textarea>
-
 
                 <button
                     type="submit"
@@ -442,9 +432,7 @@
             </form>
 
 
-            <!-- ==========================
-                 CONFIRMACIÓN
-                 ========================== -->
+            <!-- CONFIRMACIÓN -->
 
             <div
                 id="confirmacion"
@@ -513,13 +501,8 @@
     const SUPABASE_URL =
         "https://mjxiyzapdybzckurootw.supabase.co";
 
-    /*
-     * IMPORTANTE:
-     * Pon aquí tu misma publishable key que ya tenías.
-     */
-
-    const SUPABASE_KEY ="sb_publishable_Ox1Wz7UT2Gw6uHOP6SncjQ_sGapEEB-";.
-        
+    const SUPABASE_KEY =
+        "PEGA_AQUI_TU_CLAVE_PUBLICABLE";
 
 
     const supabaseClient =
@@ -646,11 +629,6 @@
                     return;
                 }
 
-
-                /*
-                 * Si Supabase requiere confirmar
-                 * el correo, mostramos el aviso.
-                 */
 
                 if (
                     data.user &&
@@ -831,10 +809,6 @@
                     "mensaje";
 
 
-                /*
-                 * Obtener usuario autenticado
-                 */
-
                 const {
                     data: {
                         user
@@ -866,4 +840,201 @@
                         .trim();
 
 
-       
+                const telefono =
+                    document
+                        .getElementById("telefono")
+                        .value
+                        .trim();
+
+
+                const servicioId =
+                    document
+                        .getElementById("servicio")
+                        .value;
+
+
+                const servicioTexto =
+                    document
+                        .getElementById("servicio")
+                        .selectedOptions[0]
+                        .textContent
+                        .trim();
+
+
+                const fecha =
+                    document
+                        .getElementById("fecha")
+                        .value;
+
+
+                const hora =
+                    document
+                        .getElementById("hora")
+                        .value;
+
+
+                const comentario =
+                    document
+                        .getElementById("comentario")
+                        .value
+                        .trim();
+
+
+                if (!servicioId) {
+
+                    mensajeCita.textContent =
+                        "Selecciona un servicio.";
+
+                    mensajeCita.className =
+                        "mensaje error";
+
+                    return;
+                }
+
+
+                const {
+                    error
+                } =
+                    await supabaseClient
+                        .from("citas")
+                        .insert([
+                            {
+                                negocio_id:
+                                    NEGOCIO_ID,
+
+                                servicio_id:
+                                    servicioId,
+
+                                usuario:
+                                    user.id,
+
+                                nombre_cliente:
+                                    nombre,
+
+                                telefono_cliente:
+                                    telefono,
+
+                                fecha:
+                                    fecha,
+
+                                hora:
+                                    hora,
+
+                                comentario:
+                                    comentario || null,
+
+                                estado:
+                                    "pendiente"
+                            }
+                        ]);
+
+
+                if (error) {
+
+                    console.error(
+                        "Error al guardar la cita:",
+                        error
+                    );
+
+                    mensajeCita.textContent =
+                        "Error: " +
+                        error.message;
+
+                    mensajeCita.className =
+                        "mensaje error";
+
+                    return;
+                }
+
+
+                document
+                    .getElementById("resultadoNombre")
+                    .textContent =
+                        nombre;
+
+
+                document
+                    .getElementById("resultadoTelefono")
+                    .textContent =
+                        telefono;
+
+
+                document
+                    .getElementById("resultadoServicio")
+                    .textContent =
+                        servicioTexto;
+
+
+                document
+                    .getElementById("resultadoFecha")
+                    .textContent =
+                        fecha;
+
+
+                document
+                    .getElementById("resultadoHora")
+                    .textContent =
+                        hora;
+
+
+                document
+                    .getElementById("resultadoComentario")
+                    .textContent =
+                        comentario ||
+                        "Sin comentario";
+
+
+                document
+                    .getElementById("formulario")
+                    .style.display =
+                        "none";
+
+
+                document
+                    .getElementById("confirmacion")
+                    .style.display =
+                        "block";
+
+
+                mensajeCita.textContent = "";
+
+            }
+        );
+
+
+    /* ==========================================
+       OTRA RESERVA
+       ========================================== */
+
+    document
+        .getElementById("botonOtraReserva")
+        .addEventListener(
+            "click",
+            function () {
+
+                document
+                    .getElementById("formulario")
+                    .reset();
+
+
+                document
+                    .getElementById("formulario")
+                    .style.display =
+                        "block";
+
+
+                document
+                    .getElementById("confirmacion")
+                    .style.display =
+                        "none";
+
+
+                mensajeCita.textContent = "";
+
+            }
+        );
+
+</script>
+
+</body>
+</html>
