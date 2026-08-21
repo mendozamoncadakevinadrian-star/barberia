@@ -121,7 +121,7 @@
         }
 
         .oculto {
-            display: none;
+            display: none !important;
         }
 
         .usuario-barra {
@@ -146,6 +146,28 @@
             border-radius: 8px;
             margin: 8px 0;
         }
+
+        details {
+            margin-top: 15px;
+        }
+
+        summary {
+            cursor: pointer;
+            background: #eeeeee;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            list-style: none;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .formulario-registro {
+            margin-top: 20px;
+        }
     </style>
 </head>
 
@@ -160,8 +182,9 @@
             <p>Cortes y estilos para todos</p>
         </div>
 
+
         <!-- ==========================
-            PRUEBA INICIO DE SESIÓN / REGISTRO
+             AUTENTICACIÓN
              ========================== -->
 
         <div id="zonaAuth">
@@ -201,83 +224,73 @@
 
             </form>
 
-            <button
-                type="button"
-                id="botonMostrarRegistro"
-                class="boton-secundario"
-            >
-                Crear una cuenta
-            </button>
-
             <div
                 id="mensajeLogin"
                 class="mensaje"
             ></div>
 
 
-            <!-- REGISTRO -->
+            <!--
+                El registro se abre con HTML,
+                sin depender de un botón JavaScript.
+            -->
 
-            <div
-                id="zonaRegistro"
-                class="oculto"
-            >
+            <details>
 
-                <h2>Crear cuenta</h2>
+                <summary>
+                    Crear una cuenta
+                </summary>
 
-                <form id="formRegistro">
+                <div class="formulario-registro">
 
-                    <label for="registroEmail">
-                        Correo electrónico
-                    </label>
+                    <form id="formRegistro">
 
-                    <input
-                        type="email"
-                        id="registroEmail"
-                        placeholder="tu@email.com"
-                        required
-                    >
+                        <label for="registroEmail">
+                            Correo electrónico
+                        </label>
 
-                    <label for="registroPassword">
-                        Contraseña
-                    </label>
+                        <input
+                            type="email"
+                            id="registroEmail"
+                            placeholder="tu@email.com"
+                            required
+                        >
 
-                    <input
-                        type="password"
-                        id="registroPassword"
-                        placeholder="Mínimo 6 caracteres"
-                        minlength="6"
-                        required
-                    >
+                        <label for="registroPassword">
+                            Contraseña
+                        </label>
 
-                    <button
-                        type="submit"
-                        class="boton-principal"
-                    >
-                        Registrarme
-                    </button>
+                        <input
+                            type="password"
+                            id="registroPassword"
+                            placeholder="Mínimo 6 caracteres"
+                            minlength="6"
+                            required
+                        >
 
-                </form>
+                        <button
+                            type="submit"
+                            class="boton-principal"
+                        >
+                            Registrarme
+                        </button>
 
-                <button
-                    type="button"
-                    id="botonVolverLogin"
-                    class="boton-secundario"
-                >
-                    Volver a iniciar sesión
-                </button>
+                    </form>
 
-                <div
-                    id="mensajeRegistro"
-                    class="mensaje"
-                ></div>
+                    <div
+                        id="mensajeRegistro"
+                        class="mensaje"
+                    ></div>
 
-            </div>
+                </div>
+
+            </details>
 
         </div>
 
 
         <!-- ==========================
-             ZONA DEL USUARIO
+             ZONA USUARIO
              ========================== -->
 
         <div
@@ -367,11 +380,6 @@
 
                 </select>
 
-                <p>
-                    Por ahora está conectado el servicio
-                    <strong>Corte</strong>.
-                </p>
-
                 <label for="fecha">
                     Fecha
                 </label>
@@ -432,7 +440,9 @@
             </form>
 
 
-            <!-- CONFIRMACIÓN -->
+            <!-- ==========================
+                 CONFIRMACIÓN
+                 ========================== -->
 
             <div
                 id="confirmacion"
@@ -501,8 +511,8 @@
     const SUPABASE_URL =
         "https://mjxiyzapdybzckurootw.supabase.co";
 
-    const SUPABASE_KEY ="sb_publishable_Ox1Wz7UT2Gw6uHOP6SncjQ_sGapEEB-";.
-        
+    const SUPABASE_KEY =
+        "PEGA_AQUI_TU_CLAVE_PUBLICABLE";
 
 
     const supabaseClient =
@@ -530,9 +540,6 @@
     const zonaUsuario =
         document.getElementById("zonaUsuario");
 
-    const zonaRegistro =
-        document.getElementById("zonaRegistro");
-
     const mensajeLogin =
         document.getElementById("mensajeLogin");
 
@@ -544,42 +551,6 @@
 
 
     /* ==========================================
-       MOSTRAR REGISTRO
-       ========================================== */
-
-    document
-        .getElementById("botonMostrarRegistro")
-        .addEventListener(
-            "click",
-            function () {
-
-                zonaRegistro.classList.remove("oculto");
-
-                mensajeLogin.textContent = "";
-
-            }
-        );
-
-
-    /* ==========================================
-       VOLVER AL LOGIN
-       ========================================== */
-
-    document
-        .getElementById("botonVolverLogin")
-        .addEventListener(
-            "click",
-            function () {
-
-                zonaRegistro.classList.add("oculto");
-
-                mensajeRegistro.textContent = "";
-
-            }
-        );
-
-
-    /* ==========================================
        REGISTRO
        ========================================== */
 
@@ -587,12 +558,16 @@
         .getElementById("formRegistro")
         .addEventListener(
             "submit",
-            async function (event) {
+            async function(event) {
 
                 event.preventDefault();
 
                 mensajeRegistro.textContent =
                     "Creando cuenta...";
+
+                mensajeRegistro.className =
+                    "mensaje";
+
 
                 const email =
                     document
@@ -600,10 +575,23 @@
                         .value
                         .trim();
 
+
                 const password =
                     document
                         .getElementById("registroPassword")
                         .value;
+
+
+                if (password.length < 6) {
+
+                    mensajeRegistro.textContent =
+                        "La contraseña debe tener al menos 6 caracteres.";
+
+                    mensajeRegistro.className =
+                        "mensaje error";
+
+                    return;
+                }
 
 
                 const {
@@ -618,7 +606,10 @@
 
                 if (error) {
 
-                    console.error(error);
+                    console.error(
+                        "Error de registro:",
+                        error
+                    );
 
                     mensajeRegistro.textContent =
                         "Error: " + error.message;
@@ -663,12 +654,15 @@
         .getElementById("formLogin")
         .addEventListener(
             "submit",
-            async function (event) {
+            async function(event) {
 
                 event.preventDefault();
 
                 mensajeLogin.textContent =
                     "Iniciando sesión...";
+
+                mensajeLogin.className =
+                    "mensaje";
 
 
                 const email =
@@ -676,6 +670,7 @@
                         .getElementById("loginEmail")
                         .value
                         .trim();
+
 
                 const password =
                     document
@@ -695,7 +690,10 @@
 
                 if (error) {
 
-                    console.error(error);
+                    console.error(
+                        "Error de inicio de sesión:",
+                        error
+                    );
 
                     mensajeLogin.textContent =
                         "Error: " + error.message;
@@ -721,7 +719,7 @@
         .getElementById("botonCerrarSesion")
         .addEventListener(
             "click",
-            async function () {
+            async function() {
 
                 const {
                     error
@@ -731,7 +729,10 @@
 
                 if (error) {
 
-                    console.error(error);
+                    console.error(
+                        "Error al cerrar sesión:",
+                        error
+                    );
 
                 }
 
@@ -740,7 +741,7 @@
 
 
     /* ==========================================
-       ACTUALIZAR INTERFAZ
+       ACTUALIZAR PANTALLA
        ========================================== */
 
     async function actualizarInterfaz() {
@@ -779,7 +780,7 @@
 
 
     supabaseClient.auth.onAuthStateChange(
-        function () {
+        function() {
 
             actualizarInterfaz();
 
@@ -798,7 +799,7 @@
         .getElementById("formulario")
         .addEventListener(
             "submit",
-            async function (event) {
+            async function(event) {
 
                 event.preventDefault();
 
@@ -892,6 +893,24 @@
                 }
 
 
+                /*
+                 * IMPORTANTE:
+                 * Esta parte utiliza las columnas
+                 * que ya teníamos:
+                 *
+                 * negocio_id
+                 * servicio_id
+                 * nombre_cliente
+                 * telefono_cliente
+                 * fecha
+                 * hora
+                 * comentario
+                 * estado
+                 *
+                 * El usuario se comprueba mediante
+                 * Supabase Auth antes de guardar.
+                 */
+
                 const {
                     error
                 } =
@@ -904,9 +923,6 @@
 
                                 servicio_id:
                                     servicioId,
-
-                                usuario:
-                                    user.id,
 
                                 nombre_cliente:
                                     nombre,
@@ -937,8 +953,7 @@
                     );
 
                     mensajeCita.textContent =
-                        "Error: " +
-                        error.message;
+                        "Error: " + error.message;
 
                     mensajeCita.className =
                         "mensaje error";
@@ -1010,7 +1025,7 @@
         .getElementById("botonOtraReserva")
         .addEventListener(
             "click",
-            function () {
+            function() {
 
                 document
                     .getElementById("formulario")
@@ -1033,7 +1048,7 @@
 
             }
         );
-alert("JavaScript funciona");
+
 </script>
 
 </body>
