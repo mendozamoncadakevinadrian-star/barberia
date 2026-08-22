@@ -165,7 +165,7 @@
             display: none;
         }
 
-        .formulario-registro {
+        .registro-contenido {
             margin-top: 20px;
         }
     </style>
@@ -183,9 +183,9 @@
         </div>
 
 
-        <!-- ==========================
+        <!-- =====================================
              AUTENTICACIÓN
-             ========================== -->
+             ===================================== -->
 
         <div id="zonaAuth">
 
@@ -230,10 +230,7 @@
             ></div>
 
 
-            <!--
-                El registro se abre con HTML,
-                sin depender de un botón JavaScript.
-            -->
+            <!-- REGISTRO -->
 
             <details>
 
@@ -241,7 +238,9 @@
                     Crear una cuenta
                 </summary>
 
-                <div class="formulario-registro">
+                <div class="registro-contenido">
+
+                    <h2>Crear cuenta</h2>
 
                     <form id="formRegistro">
 
@@ -289,9 +288,9 @@
         </div>
 
 
-        <!-- ==========================
+        <!-- =====================================
              ZONA USUARIO
-             ========================== -->
+             ===================================== -->
 
         <div
             id="zonaUsuario"
@@ -440,9 +439,7 @@
             </form>
 
 
-            <!-- ==========================
-                 CONFIRMACIÓN
-                 ========================== -->
+            <!-- CONFIRMACIÓN -->
 
             <div
                 id="confirmacion"
@@ -511,8 +508,14 @@
     const SUPABASE_URL =
         "https://mjxiyzapdybzckurootw.supabase.co";
 
-    const SUPABASE_KEY ="sb_publishable_Ox1Wz7UT2Gw6uHOP6SncjQ_sGapEEB-";.
-        
+    /*
+       IMPORTANTE:
+       Aquí debe quedarse TU CLAVE PUBLICABLE.
+       No la reemplaces por otra.
+    */
+
+    const SUPABASE_KEY =
+        "PEGA_AQUI_TU_CLAVE_PUBLICABLE";
 
 
     const supabaseClient =
@@ -551,7 +554,7 @@
 
 
     /* ==========================================
-       REGISTRO
+       CREAR CUENTA
        ========================================== */
 
     document
@@ -582,37 +585,18 @@
                         .value;
 
 
-                if (password.length < 6) {
-
-                    mensajeRegistro.textContent =
-                        "La contraseña debe tener al menos 6 caracteres.";
-
-                    mensajeRegistro.className =
-                        "mensaje error";
-
-                    return;
-                }
-
-
-                const {
-                    data,
-                    error
-                } =
+                const resultado =
                     await supabaseClient.auth.signUp({
                         email: email,
                         password: password
                     });
 
 
-                if (error) {
-
-                    console.error(
-                        "Error de registro:",
-                        error
-                    );
+                if (resultado.error) {
 
                     mensajeRegistro.textContent =
-                        "Error: " + error.message;
+                        "Error: " +
+                        resultado.error.message;
 
                     mensajeRegistro.className =
                         "mensaje error";
@@ -622,8 +606,8 @@
 
 
                 if (
-                    data.user &&
-                    !data.session
+                    resultado.data.user &&
+                    !resultado.data.session
                 ) {
 
                     mensajeRegistro.textContent =
@@ -657,7 +641,6 @@
             async function(event) {
 
                 event.preventDefault();
-                alert("El botón de iniciar sesión funciona");
 
                 mensajeLogin.textContent =
                     "Iniciando sesión...";
@@ -679,34 +662,49 @@
                         .value;
 
 
-                const {
-                    error
-                } =
-                    await supabaseClient.auth
-                        .signInWithPassword({
-                            email: email,
-                            password: password
-                        });
+                try {
+
+                    const resultado =
+                        await supabaseClient.auth
+                            .signInWithPassword({
+                                email: email,
+                                password: password
+                            });
 
 
-                if (error) {
+                    if (resultado.error) {
 
-                    console.error(
-                        "Error de inicio de sesión:",
-                        error
-                    );
+                        mensajeLogin.textContent =
+                            "Error: " +
+                            resultado.error.message;
+
+                        mensajeLogin.className =
+                            "mensaje error";
+
+                        return;
+                    }
+
 
                     mensajeLogin.textContent =
-                        "Error: " + error.message;
+                        "Sesión iniciada correctamente.";
+
+                    mensajeLogin.className =
+                        "mensaje exito";
+
+
+                    await actualizarInterfaz();
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    mensajeLogin.textContent =
+                        "Ocurrió un error al iniciar sesión.";
 
                     mensajeLogin.className =
                         "mensaje error";
 
-                    return;
                 }
-
-
-                mensajeLogin.textContent = "";
 
             }
         );
@@ -722,37 +720,44 @@
             "click",
             async function() {
 
-                const {
-                    error
-                } =
+                const resultado =
                     await supabaseClient.auth.signOut();
 
 
-                if (error) {
+                if (resultado.error) {
 
-                    console.error(
-                        "Error al cerrar sesión:",
-                        error
-                    );
+                    console.error(resultado.error);
 
+                    return;
                 }
+
+
+                await actualizarInterfaz();
 
             }
         );
 
 
     /* ==========================================
-       ACTUALIZAR PANTALLA
+       ACTUALIZAR INTERFAZ
        ========================================== */
 
     async function actualizarInterfaz() {
 
-        const {
-            data: {
-                session
-            }
-        } =
+        const resultado =
             await supabaseClient.auth.getSession();
+
+
+        if (resultado.error) {
+
+            console.error(resultado.error);
+
+            return;
+        }
+
+
+        const session =
+            resultado.data.session;
 
 
         if (
@@ -811,18 +816,13 @@
                     "mensaje";
 
 
-                const {
-                    data: {
-                        user
-                    },
-                    error: userError
-                } =
+                const usuario =
                     await supabaseClient.auth.getUser();
 
 
                 if (
-                    userError ||
-                    !user
+                    usuario.error ||
+                    !usuario.data.user
                 ) {
 
                     mensajeCita.textContent =
@@ -882,39 +882,7 @@
                         .trim();
 
 
-                if (!servicioId) {
-
-                    mensajeCita.textContent =
-                        "Selecciona un servicio.";
-
-                    mensajeCita.className =
-                        "mensaje error";
-
-                    return;
-                }
-
-
-                /*
-                 * IMPORTANTE:
-                 * Esta parte utiliza las columnas
-                 * que ya teníamos:
-                 *
-                 * negocio_id
-                 * servicio_id
-                 * nombre_cliente
-                 * telefono_cliente
-                 * fecha
-                 * hora
-                 * comentario
-                 * estado
-                 *
-                 * El usuario se comprueba mediante
-                 * Supabase Auth antes de guardar.
-                 */
-
-                const {
-                    error
-                } =
+                const resultado =
                     await supabaseClient
                         .from("citas")
                         .insert([
@@ -946,15 +914,11 @@
                         ]);
 
 
-                if (error) {
-
-                    console.error(
-                        "Error al guardar la cita:",
-                        error
-                    );
+                if (resultado.error) {
 
                     mensajeCita.textContent =
-                        "Error: " + error.message;
+                        "Error: " +
+                        resultado.error.message;
 
                     mensajeCita.className =
                         "mensaje error";
@@ -968,30 +932,25 @@
                     .textContent =
                         nombre;
 
-
                 document
                     .getElementById("resultadoTelefono")
                     .textContent =
                         telefono;
-
 
                 document
                     .getElementById("resultadoServicio")
                     .textContent =
                         servicioTexto;
 
-
                 document
                     .getElementById("resultadoFecha")
                     .textContent =
                         fecha;
 
-
                 document
                     .getElementById("resultadoHora")
                     .textContent =
                         hora;
-
 
                 document
                     .getElementById("resultadoComentario")
