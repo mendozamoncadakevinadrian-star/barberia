@@ -146,28 +146,6 @@
             border-radius: 8px;
             margin: 8px 0;
         }
-
-        details {
-            margin-top: 15px;
-        }
-
-        summary {
-            cursor: pointer;
-            background: #eeeeee;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: bold;
-            list-style: none;
-        }
-
-        summary::-webkit-details-marker {
-            display: none;
-        }
-
-        .registro-contenido {
-            margin-top: 20px;
-        }
     </style>
 </head>
 
@@ -183,9 +161,9 @@
         </div>
 
 
-        <!-- =====================================
-             AUTENTICACIÓN
-             ===================================== -->
+        <!-- ==========================
+             INICIO DE SESIÓN
+             ========================== -->
 
         <div id="zonaAuth">
 
@@ -230,67 +208,81 @@
             ></div>
 
 
-            <!-- REGISTRO -->
+            <!-- ==========================
+                 REGISTRO
+                 ========================== -->
 
-            <details>
+            <button
+                type="button"
+                id="botonMostrarRegistro"
+                class="boton-secundario"
+            >
+                Crear una cuenta
+            </button>
 
-                <summary>
-                    Crear una cuenta
-                </summary>
 
-                <div class="registro-contenido">
+            <div
+                id="zonaRegistro"
+                class="oculto"
+            >
 
-                    <h2>Crear cuenta</h2>
+                <h2>Crear cuenta</h2>
 
-                    <form id="formRegistro">
+                <form id="formRegistro">
 
-                        <label for="registroEmail">
-                            Correo electrónico
-                        </label>
+                    <label for="registroEmail">
+                        Correo electrónico
+                    </label>
 
-                        <input
-                            type="email"
-                            id="registroEmail"
-                            placeholder="tu@email.com"
-                            required
-                        >
+                    <input
+                        type="email"
+                        id="registroEmail"
+                        placeholder="tu@email.com"
+                        required
+                    >
 
-                        <label for="registroPassword">
-                            Contraseña
-                        </label>
+                    <label for="registroPassword">
+                        Contraseña
+                    </label>
 
-                        <input
-                            type="password"
-                            id="registroPassword"
-                            placeholder="Mínimo 6 caracteres"
-                            minlength="6"
-                            required
-                        >
+                    <input
+                        type="password"
+                        id="registroPassword"
+                        placeholder="Mínimo 6 caracteres"
+                        minlength="6"
+                        required
+                    >
 
-                        <button
-                            type="submit"
-                            class="boton-principal"
-                        >
-                            Registrarme
-                        </button>
+                    <button
+                        type="submit"
+                        class="boton-principal"
+                    >
+                        Registrarme
+                    </button>
 
-                    </form>
+                </form>
 
-                    <div
-                        id="mensajeRegistro"
-                        class="mensaje"
-                    ></div>
+                <button
+                    type="button"
+                    id="botonVolverLogin"
+                    class="boton-secundario"
+                >
+                    Volver a iniciar sesión
+                </button>
 
-                </div>
+                <div
+                    id="mensajeRegistro"
+                    class="mensaje"
+                ></div>
 
-            </details>
+            </div>
 
         </div>
 
 
-        <!-- =====================================
-             ZONA USUARIO
-             ===================================== -->
+        <!-- ==========================
+             ZONA DEL USUARIO
+             ========================== -->
 
         <div
             id="zonaUsuario"
@@ -439,8 +431,6 @@
             </form>
 
 
-            <!-- CONFIRMACIÓN -->
-
             <div
                 id="confirmacion"
                 class="confirmacion"
@@ -508,13 +498,13 @@
     const SUPABASE_URL =
         "https://mjxiyzapdybzckurootw.supabase.co";
 
+
     /*
-       IMPORTANTE:
-       Aquí debe quedarse TU CLAVE PUBLICABLE.
-       No la reemplaces por otra.
+       PEGA AQUÍ TU CLAVE PUBLICABLE.
+       NO ME LA ENVÍES A MÍ.
     */
 
-    const SUPABASE_KEY ="sb_publishable_Ox1Wz7UT2Gw6uHOP6SncjQ_sGapEEB-";.
+    const SUPABASE_KEY =
         
 
 
@@ -543,6 +533,9 @@
     const zonaUsuario =
         document.getElementById("zonaUsuario");
 
+    const zonaRegistro =
+        document.getElementById("zonaRegistro");
+
     const mensajeLogin =
         document.getElementById("mensajeLogin");
 
@@ -554,36 +547,66 @@
 
 
     /* ==========================================
+       MOSTRAR REGISTRO
+       ========================================== */
+
+    document
+        .getElementById("botonMostrarRegistro")
+        .onclick = function() {
+
+            zonaRegistro.classList.remove("oculto");
+
+            mensajeLogin.textContent = "";
+
+        };
+
+
+    /* ==========================================
+       VOLVER AL LOGIN
+       ========================================== */
+
+    document
+        .getElementById("botonVolverLogin")
+        .onclick = function() {
+
+            zonaRegistro.classList.add("oculto");
+
+            mensajeRegistro.textContent = "";
+
+        };
+
+
+    /* ==========================================
        CREAR CUENTA
        ========================================== */
 
     document
         .getElementById("formRegistro")
-        .addEventListener(
-            "submit",
-            async function(event) {
+        .onsubmit = async function(event) {
 
-                event.preventDefault();
+            event.preventDefault();
 
-                mensajeRegistro.textContent =
-                    "Creando cuenta...";
+            mensajeRegistro.textContent =
+                "Creando cuenta...";
 
-                mensajeRegistro.className =
-                    "mensaje";
+            mensajeRegistro.className =
+                "mensaje";
 
 
-                const email =
-                    document
-                        .getElementById("registroEmail")
-                        .value
-                        .trim();
+            const email =
+                document
+                    .getElementById("registroEmail")
+                    .value
+                    .trim();
 
 
-                const password =
-                    document
-                        .getElementById("registroPassword")
-                        .value;
+            const password =
+                document
+                    .getElementById("registroPassword")
+                    .value;
 
+
+            try {
 
                 const resultado =
                     await supabaseClient.auth.signUp({
@@ -626,8 +649,19 @@
                 mensajeRegistro.className =
                     "mensaje exito";
 
+            } catch (error) {
+
+                console.error(error);
+
+                mensajeRegistro.textContent =
+                    "Error al crear la cuenta.";
+
+                mensajeRegistro.className =
+                    "mensaje error";
+
             }
-        );
+
+        };
 
 
     /* ==========================================
@@ -636,78 +670,75 @@
 
     document
         .getElementById("formLogin")
-        .addEventListener(
-            "submit",
-            async function(event) {
+        .onsubmit = async function(event) {
 
-                event.preventDefault();
+            event.preventDefault();
 
-                mensajeLogin.textContent =
-                    "Iniciando sesión...";
+            mensajeLogin.textContent =
+                "Iniciando sesión...";
 
-                mensajeLogin.className =
-                    "mensaje";
+            mensajeLogin.className =
+                "mensaje";
 
 
-                const email =
-                    document
-                        .getElementById("loginEmail")
-                        .value
-                        .trim();
+            const email =
+                document
+                    .getElementById("loginEmail")
+                    .value
+                    .trim();
 
 
-                const password =
-                    document
-                        .getElementById("loginPassword")
-                        .value;
+            const password =
+                document
+                    .getElementById("loginPassword")
+                    .value;
 
 
-                try {
+            try {
 
-                    const resultado =
-                        await supabaseClient.auth
-                            .signInWithPassword({
-                                email: email,
-                                password: password
-                            });
+                const resultado =
+                    await supabaseClient.auth
+                        .signInWithPassword({
+                            email: email,
+                            password: password
+                        });
 
 
-                    if (resultado.error) {
-
-                        mensajeLogin.textContent =
-                            "Error: " +
-                            resultado.error.message;
-
-                        mensajeLogin.className =
-                            "mensaje error";
-
-                        return;
-                    }
-
+                if (resultado.error) {
 
                     mensajeLogin.textContent =
-                        "Sesión iniciada correctamente.";
-
-                    mensajeLogin.className =
-                        "mensaje exito";
-
-
-                    await actualizarInterfaz();
-
-                } catch (error) {
-
-                    console.error(error);
-
-                    mensajeLogin.textContent =
-                        "Ocurrió un error al iniciar sesión.";
+                        "Error: " +
+                        resultado.error.message;
 
                     mensajeLogin.className =
                         "mensaje error";
 
+                    return;
                 }
 
+
+                mensajeLogin.textContent =
+                    "Sesión iniciada correctamente.";
+
+                mensajeLogin.className =
+                    "mensaje exito";
+
+
+                actualizarInterfaz();
+
+            } catch (error) {
+
+                console.error(error);
+
+                mensajeLogin.textContent =
+                    "Error al iniciar sesión.";
+
+                mensajeLogin.className =
+                    "mensaje error";
+
             }
-        );
+
+        };
 
 
     /* ==========================================
@@ -716,26 +747,23 @@
 
     document
         .getElementById("botonCerrarSesion")
-        .addEventListener(
-            "click",
-            async function() {
+        .onclick = async function() {
 
-                const resultado =
-                    await supabaseClient.auth.signOut();
+            const resultado =
+                await supabaseClient.auth.signOut();
 
 
-                if (resultado.error) {
+            if (resultado.error) {
 
-                    console.error(resultado.error);
+                console.error(resultado.error);
 
-                    return;
-                }
-
-
-                await actualizarInterfaz();
-
+                return;
             }
-        );
+
+
+            actualizarInterfaz();
+
+        };
 
 
     /* ==========================================
@@ -803,178 +831,155 @@
 
     document
         .getElementById("formulario")
-        .addEventListener(
-            "submit",
-            async function(event) {
+        .onsubmit = async function(event) {
 
-                event.preventDefault();
+            event.preventDefault();
+
+            mensajeCita.textContent =
+                "Guardando la cita...";
+
+            mensajeCita.className =
+                "mensaje";
+
+
+            const usuario =
+                await supabaseClient.auth.getUser();
+
+
+            if (
+                usuario.error ||
+                !usuario.data.user
+            ) {
 
                 mensajeCita.textContent =
-                    "Guardando la cita...";
+                    "Debes iniciar sesión para reservar.";
 
                 mensajeCita.className =
-                    "mensaje";
+                    "mensaje error";
 
-
-                const usuario =
-                    await supabaseClient.auth.getUser();
-
-
-                if (
-                    usuario.error ||
-                    !usuario.data.user
-                ) {
-
-                    mensajeCita.textContent =
-                        "Debes iniciar sesión para reservar.";
-
-                    mensajeCita.className =
-                        "mensaje error";
-
-                    return;
-                }
-
-
-                const nombre =
-                    document
-                        .getElementById("nombre")
-                        .value
-                        .trim();
-
-
-                const telefono =
-                    document
-                        .getElementById("telefono")
-                        .value
-                        .trim();
-
-
-                const servicioId =
-                    document
-                        .getElementById("servicio")
-                        .value;
-
-
-                const servicioTexto =
-                    document
-                        .getElementById("servicio")
-                        .selectedOptions[0]
-                        .textContent
-                        .trim();
-
-
-                const fecha =
-                    document
-                        .getElementById("fecha")
-                        .value;
-
-
-                const hora =
-                    document
-                        .getElementById("hora")
-                        .value;
-
-
-                const comentario =
-                    document
-                        .getElementById("comentario")
-                        .value
-                        .trim();
-
-
-                const resultado =
-                    await supabaseClient
-                        .from("citas")
-                        .insert([
-                            {
-                                negocio_id:
-                                    NEGOCIO_ID,
-
-                                servicio_id:
-                                    servicioId,
-
-                                nombre_cliente:
-                                    nombre,
-
-                                telefono_cliente:
-                                    telefono,
-
-                                fecha:
-                                    fecha,
-
-                                hora:
-                                    hora,
-
-                                comentario:
-                                    comentario || null,
-
-                                estado:
-                                    "pendiente"
-                            }
-                        ]);
-
-
-                if (resultado.error) {
-
-                    mensajeCita.textContent =
-                        "Error: " +
-                        resultado.error.message;
-
-                    mensajeCita.className =
-                        "mensaje error";
-
-                    return;
-                }
-
-
-                document
-                    .getElementById("resultadoNombre")
-                    .textContent =
-                        nombre;
-
-                document
-                    .getElementById("resultadoTelefono")
-                    .textContent =
-                        telefono;
-
-                document
-                    .getElementById("resultadoServicio")
-                    .textContent =
-                        servicioTexto;
-
-                document
-                    .getElementById("resultadoFecha")
-                    .textContent =
-                        fecha;
-
-                document
-                    .getElementById("resultadoHora")
-                    .textContent =
-                        hora;
-
-                document
-                    .getElementById("resultadoComentario")
-                    .textContent =
-                        comentario ||
-                        "Sin comentario";
-
-
-                document
-                    .getElementById("formulario")
-                    .style.display =
-                        "none";
-
-
-                document
-                    .getElementById("confirmacion")
-                    .style.display =
-                        "block";
-
-
-                mensajeCita.textContent = "";
-
+                return;
             }
-        );
+
+
+            const nombre =
+                document
+                    .getElementById("nombre")
+                    .value
+                    .trim();
+
+
+            const telefono =
+                document
+                    .getElementById("telefono")
+                    .value
+                    .trim();
+
+
+            const servicioId =
+                document
+                    .getElementById("servicio")
+                    .value;
+
+
+            const servicioTexto =
+                document
+                    .getElementById("servicio")
+                    .selectedOptions[0]
+                    .textContent
+                    .trim();
+
+
+            const fecha =
+                document
+                    .getElementById("fecha")
+                    .value;
+
+
+            const hora =
+                document
+                    .getElementById("hora")
+                    .value;
+
+
+            const comentario =
+                document
+                    .getElementById("comentario")
+                    .value
+                    .trim();
+
+
+            const resultado =
+                await supabaseClient
+                    .from("citas")
+                    .insert([{
+                        negocio_id: NEGOCIO_ID,
+                        servicio_id: servicioId,
+                        nombre_cliente: nombre,
+                        telefono_cliente: telefono,
+                        fecha: fecha,
+                        hora: hora,
+                        comentario: comentario || null,
+                        estado: "pendiente"
+                    }]);
+
+
+            if (resultado.error) {
+
+                mensajeCita.textContent =
+                    "Error: " +
+                    resultado.error.message;
+
+                mensajeCita.className =
+                    "mensaje error";
+
+                return;
+            }
+
+
+            document
+                .getElementById("resultadoNombre")
+                .textContent = nombre;
+
+
+            document
+                .getElementById("resultadoTelefono")
+                .textContent = telefono;
+
+
+            document
+                .getElementById("resultadoServicio")
+                .textContent = servicioTexto;
+
+
+            document
+                .getElementById("resultadoFecha")
+                .textContent = fecha;
+
+
+            document
+                .getElementById("resultadoHora")
+                .textContent = hora;
+
+
+            document
+                .getElementById("resultadoComentario")
+                .textContent =
+                    comentario || "Sin comentario";
+
+
+            document
+                .getElementById("formulario")
+                .style.display = "none";
+
+
+            document
+                .getElementById("confirmacion")
+                .style.display = "block";
+
+
+            mensajeCita.textContent = "";
+
+        };
 
 
     /* ==========================================
@@ -983,31 +988,26 @@
 
     document
         .getElementById("botonOtraReserva")
-        .addEventListener(
-            "click",
-            function() {
+        .onclick = function() {
 
-                document
-                    .getElementById("formulario")
-                    .reset();
+            document
+                .getElementById("formulario")
+                .reset();
 
 
-                document
-                    .getElementById("formulario")
-                    .style.display =
-                        "block";
+            document
+                .getElementById("formulario")
+                .style.display = "block";
 
 
-                document
-                    .getElementById("confirmacion")
-                    .style.display =
-                        "none";
+            document
+                .getElementById("confirmacion")
+                .style.display = "none";
 
 
-                mensajeCita.textContent = "";
+            mensajeCita.textContent = "";
 
-            }
-        );
+        };
 
 </script>
 
